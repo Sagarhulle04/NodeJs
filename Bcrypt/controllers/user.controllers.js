@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import User from "../models/user.js";
+import { json } from "express";
 
 const register = async (req, res) => {
   const { name, email, password } = req.body;
@@ -22,4 +23,25 @@ const register = async (req, res) => {
   }
 };
 
-export { register };
+const login = async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user)
+      return res.status(400).json({ message: "Account doesnt exists" });
+
+    if (!email || !password)
+      return res.status(400).json({ message: "Enter all the fields" });
+
+    const { password: isPassword } = user;
+    const checkPassword = await bcrypt.compare(password, isPassword);
+    if (!checkPassword)
+      return res.status(400).json({ message: "Invalid Credentails" });
+    res.status(200).json({ message: user });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export { register, login };
