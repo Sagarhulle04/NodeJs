@@ -1,7 +1,9 @@
 import mongoose from "mongoose";
 
 async function main() {
-  await mongoose.connect("mongodb://localhost:27017/WS");
+  await mongoose.connect(
+    "mongodb+srv://sagarhulle22:sagarhulle22@cluster0.ytw8il6.mongodb.net/",
+  );
 }
 
 main()
