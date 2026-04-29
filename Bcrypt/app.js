@@ -13,12 +13,16 @@ import userRouter from "./router/user.routes.js";
 const app = express();
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://your-frontend.vercel.app"],
+    origin: [
+      "http://localhost:5173",
+      "https://react-projects-7ris.onrender.com",
+    ],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     credentials: true,
     allowedHeaders: ["Content-Type"],
   }),
 );
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
