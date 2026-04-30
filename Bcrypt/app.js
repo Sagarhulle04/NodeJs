@@ -26,6 +26,7 @@ const app = express();
 const allowedOrigins = [
   "http://localhost:5173",
   "https://react-projects-7ris.onrender.com",
+  "https://ws-authentication.netlify.app/",
 ];
 
 app.use(
