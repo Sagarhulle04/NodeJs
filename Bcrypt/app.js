@@ -11,15 +11,36 @@ dotenv.config({ quiet: true });
 import userRouter from "./router/user.routes.js";
 
 const app = express();
+// app.use(
+//   cors({
+//     origin: [
+//       "http://localhost:5173",
+//       "https://react-projects-7ris.onrender.com",
+//     ],
+//     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+//     credentials: true,
+//     allowedHeaders: ["Content-Type"],
+//   }),
+// );
+
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://react-projects-7ris.onrender.com",
+];
+
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "https://react-projects-7ris.onrender.com",
-    ],
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    origin: function (origin, callback) {
+      // allow requests with no origin (like Postman)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        return callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
-    allowedHeaders: ["Content-Type"],
   }),
 );
 
