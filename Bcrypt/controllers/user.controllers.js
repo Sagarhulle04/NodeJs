@@ -17,8 +17,6 @@ const register = async (req, res) => {
 
     const user = await User.create({ name, email, password: hashedPassword });
 
-    const token = jwt.sign({ name: name }, "wisdomsprouts");
-
     res.status(201).json({ message: "User created successfully", token });
   } catch (error) {
     res.status(500).json(error.message);
@@ -37,10 +35,14 @@ const login = async (req, res) => {
       return res.status(400).json({ message: "Enter all the fields" });
 
     const { password: isPassword } = user;
+
     const checkPassword = await bcrypt.compare(password, isPassword);
     if (!checkPassword)
       return res.status(400).json({ message: "Invalid Credentails" });
-    res.status(200).json({ message: user });
+
+    const token = jwt.sign({ id: user._id }, "wisdomsprouts");
+
+    res.status(200).json({ message: user, token: token });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -66,4 +68,12 @@ const verifyToken = async (req, res) => {
   }
 };
 
-export { register, login, verifyToken };
+const loggedInUser = async (req, res) => {
+  try {
+    res.status(200).json({ message: "You can check details in the profile" });
+  } catch (error) {
+    res.status(500).json({ message: error });
+  }
+};
+
+export { register, login, verifyToken, loggedInUser };
