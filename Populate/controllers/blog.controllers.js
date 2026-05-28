@@ -9,7 +9,7 @@ const createBlog = async (req, res) => {
         .json({ success: false, message: "Enter all the fields" });
     }
 
-    const blog = await Blog.create({ title, content });
+    const blog = await Blog.create({ title, content, user: req.user.id });
 
     res
       .status(200)
@@ -21,14 +21,27 @@ const createBlog = async (req, res) => {
 
 const getBlog = async (req, res) => {
   try {
-    const blog = await Blog.find();
+    const blog = await Blog.find().populate("user", "name -_id");
+    const user = req.user;
 
-    res
-      .status(200)
-      .json({ success: true, message: "All Blogs", count: blog.length, blog });
+    res.status(200).json({
+      success: true,
+      message: "All Blogs",
+      count: blog.length,
+      blog,
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
-export { createBlog, getBlog };
+const deleteAllBlogs = async (req, res) => {
+  try {
+    const data = await Blog.deleteMany();
+    res.status(200).json({ message: "All Blogs deleted" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export { createBlog, getBlog, deleteAllBlogs };
