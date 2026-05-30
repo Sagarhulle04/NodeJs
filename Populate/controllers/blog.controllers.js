@@ -44,4 +44,46 @@ const deleteAllBlogs = async (req, res) => {
   }
 };
 
-export { createBlog, getBlog, deleteAllBlogs };
+const likeCount = async (req, res) => {
+  try {
+    const { id, status } = req.params;
+    const loggedIn = req.user.id;
+
+    const blog = await Blog.findById(id);
+
+    if (!blog) {
+      return res.status(404).json({
+        message: "Blog not found",
+      });
+    }
+
+    if (status === "like") {
+      const alreadyLiked = blog.like.some(
+        (userId) => userId.toString() === loggedIn.toString(),
+      );
+
+      if (!alreadyLiked) {
+        blog.like.push(loggedIn);
+      }
+    }
+
+    if (status === "unLike") {
+      blog.like = blog.like.filter(
+        (userId) => userId.toString() !== loggedIn.toString(),
+      );
+    }
+
+    await blog.save();
+
+    res.status(200).json({
+      likes: blog.like.length,
+      blog,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+export { createBlog, getBlog, deleteAllBlogs, likeCount };

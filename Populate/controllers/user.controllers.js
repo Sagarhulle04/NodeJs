@@ -1,14 +1,16 @@
 import express from "express";
 import User from "../models/user.schema.js";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import jwt from "jsonwebtoken";
 
 dotenv.config({ quiet: true });
 
 const register = async (req, res) => {
   const { name, email, password } = req.body;
+  const file = req.file;
   try {
+    console.log(name, email, password, file);
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
@@ -19,7 +21,14 @@ const register = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await User.create({ name, email, password: hashedPassword });
+    const url = "http://localhost:3000/uploads/" + file.filename;
+
+    const user = await User.create({
+      name,
+      email,
+      password: hashedPassword,
+      photoURL: url,
+    });
 
     return res
       .status(201)
